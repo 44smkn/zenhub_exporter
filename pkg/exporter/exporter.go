@@ -19,7 +19,7 @@ const (
 
 var (
 	BoardIssueInfo                 = prometheus.NewDesc(prometheus.BuildFQName(namespace, "board", "issue_info"), "Information about issue managed by board", []string{"workspace", "issue_number", "repository_id", "pipeline", "is_epic"}, nil)
-	BoardIssueEstimatedStoryPoints = prometheus.NewDesc(prometheus.BuildFQName(namespace, "board", "issue_estimated_story_points"), "Information about issue managed by board", []string{"workspace", "issue_number", "repository_id"}, nil)
+	BoardIssueEstimatedStoryPoints = prometheus.NewDesc(prometheus.BuildFQName(namespace, "board", "issue_estimated_story_points"), "Estimated story point of each issue", []string{"workspace", "issue_number", "repository_id"}, nil)
 )
 
 // Exporter collects ZenHub stats from ZenHub API Response and exports them using
