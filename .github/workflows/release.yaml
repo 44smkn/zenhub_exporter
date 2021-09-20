@@ -6,7 +6,7 @@ on:
       - "v*"
 
 jobs:
-  goreleaser:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go 1.17
@@ -34,7 +34,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/zenhub_exporter:${GITHUB_REF/refs\/tags\//}
+          tags: ghcr.io/${{ github.repository_owner }}/zenhub_exporter:${{ github.ref }}
 
       - run: promu crossbuild tarballs
       - run: promu checksum .tarballs
