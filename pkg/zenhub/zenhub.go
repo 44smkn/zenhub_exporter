@@ -79,7 +79,7 @@ func (c *defaultClient) FetchWorkspaceIssues(ctx context.Context) ([]model.Issue
 	issues := make([]model.Issue, 0, 200)
 
 	for _, repoID := range workspace.Repositories {
-		uri := fmt.Sprintf(ZenhubBoardEndpoint, workspace.ID, c.repoID)
+		uri := fmt.Sprintf(ZenhubBoardEndpoint, workspace.ID, strconv.Itoa(repoID))
 		req, err := c.newRequest(ctx, http.MethodGet, uri, nil)
 		if err != nil {
 			return nil, err
@@ -89,12 +89,15 @@ func (c *defaultClient) FetchWorkspaceIssues(ctx context.Context) ([]model.Issue
 			return nil, err
 		}
 
-		var board *ZenHubBoard
+		board := &ZenHubBoard{}
 		if err := decodeBody(res, board); err != nil {
 			return nil, err
 		}
 
 		for _, pipeline := range board.Pipelines {
+			if pipeline.Issues == nil {
+				continue
+			}
 			for _, is := range pipeline.Issues {
 				var estimate *int
 				if is.Estimate != nil {
@@ -130,12 +133,12 @@ func (c *defaultClient) fetchWorkspaces(ctx context.Context) (*ZenHubWorkspace, 
 		return nil, errors.New(fmt.Sprintf("Requesting to %s is failed. Status: %s", uri, res.Status))
 	}
 
-	var workspaces *[]ZenHubWorkspace
-	if err := decodeBody(res, workspaces); err != nil {
+	workspaces := make([]ZenHubWorkspace, 0, 10)
+	if err := decodeBody(res, &workspaces); err != nil {
 		return nil, err
 	}
 
-	for _, w := range *workspaces {
+	for _, w := range workspaces {
 		if w.Name == c.workspaceName {
 			return &w, nil
 		}
