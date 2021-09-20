@@ -41,6 +41,7 @@ func main() {
 	level.Info(logger).Log("msg", "Starting zenhub_exporter", "version", version.Info())
 	level.Info(logger).Log("msg", "Build context", "context", version.BuildContext())
 
+	level.Info(logger).Log("msg", "Create zenhub client", "workspace", *zenhubWorkspaceName, "repository", *zenhubRepoId)
 	zenhubClient := zenhub.NewClient(*zenhubAPIToken, *zenhubRepoId, *zenhubWorkspaceName, time.Duration(30*time.Second))
 	zenhubExporter := exporter.NewExporter(zenhubClient, logger)
 	prometheus.MustRegister(zenhubExporter, version.NewCollector("zenhub_exporter"))
