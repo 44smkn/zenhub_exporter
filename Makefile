@@ -1,23 +1,14 @@
-EXE =
-ifeq ($(GOOS),windows)
-EXE = .exe
-endif
+DOCKER_ARCHS ?= amd64 arm64
+DOCKER_IMAGE_NAME ?= zenhub-exporter
 
-## The following tasks delegate to `script/build.go` so they can be run cross-platform.
+all:: vet checkmetrics common-all
 
-.PHONY: bin/s3select$(EXE)
-bin/s3select$(EXE): script/build
-	@script/build $@
+include Makefile.common
 
-script/build: script/build.go
-	GOOS= GOARCH= GOARM= GOFLAGS= CGO_ENABLED= go build -o $@ $<
+PROMTOOL_DOCKER_IMAGE ?= $(shell docker pull -q quay.io/prometheus/prometheus:latest || echo quay.io/prometheus/prometheus:latest)
+PROMTOOL ?= docker run -i --rm -w "$(PWD)" -v "$(PWD):$(PWD)" --entrypoint promtool $(PROMTOOL_DOCKER_IMAGE)
 
-.PHONY: clean
-clean: script/build
-	@script/build $@
-
-# just a convenience task around `go test`
-.PHONY: test
-test:
-	go generate ./...
-	go test ./...
+.PHONY: checkmetrics
+checkmetrics:
+	@echo ">> checking metrics for correctness"
+	for file in test/*.metrics; do $(PROMTOOL) check metrics < $$file || exit 1; done
