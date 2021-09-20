@@ -126,6 +126,10 @@ func (c *defaultClient) fetchWorkspaces(ctx context.Context) (*ZenHubWorkspace, 
 		return nil, err
 	}
 
+	if res.StatusCode != http.StatusOK {
+		return nil, errors.New(fmt.Sprintf("Requesting to %s is failed. Status: %s", uri, res.Status))
+	}
+
 	var workspaces *[]ZenHubWorkspace
 	if err := decodeBody(res, workspaces); err != nil {
 		return nil, err
