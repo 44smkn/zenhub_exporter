@@ -38,7 +38,7 @@ func main() {
 	kingpin.Parse()
 
 	logger := promlog.New(promlogConfig)
-	level.Info(logger).Log("msg", "Starting toggl_exporter", "version", version.Info())
+	level.Info(logger).Log("msg", "Starting zenhub_exporter", "version", version.Info())
 	level.Info(logger).Log("msg", "Build context", "context", version.BuildContext())
 
 	zenhubClient := zenhub.NewClient(*zenhubAPIToken, *zenhubRepoId, *zenhubWorkspaceName, time.Duration(30*time.Second))

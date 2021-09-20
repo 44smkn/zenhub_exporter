@@ -45,7 +45,7 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 	ch <- BoardIssueEstimatedStoryPoints
 }
 
-// Collect fetches the stats from Toggl API Responce and delivers them
+// Collect fetches the stats from ZenHub API Responce and delivers them
 // as Prometheus metrics. It implements prometheus.Collector.
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	e.mutex.Lock()
